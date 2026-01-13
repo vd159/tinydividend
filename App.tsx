@@ -24,11 +24,11 @@ import {
   Pie, 
   Cell 
 } from 'recharts';
-import { StockHolding, DividendInsight, Language, Currency } from './types';
-import { INITIAL_HOLDINGS, MONTHS, TRANSLATIONS } from './constants';
-import { MiniatureCard } from './components/MiniatureCard';
-import { AddStockModal } from './components/AddStockModal';
-import { getPortfolioInsights, getCurrentExchangeRate } from './services/geminiService';
+import { StockHolding, DividendInsight, Language, Currency } from './types.ts';
+import { INITIAL_HOLDINGS, MONTHS, TRANSLATIONS } from './constants.ts';
+import { MiniatureCard } from './components/MiniatureCard.tsx';
+import { AddStockModal } from './components/AddStockModal.tsx';
+import { getPortfolioInsights, getCurrentExchangeRate } from './services/geminiService.ts';
 
 const COLORS = ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#818CF8', '#A78BFA'];
 
@@ -60,14 +60,12 @@ export default function App() {
     }
   };
 
-  // Convert USD to display value based on currency setting
   const toDisplay = (usdVal: number, type: 'current' | 'cost' | 'income' = 'current', historicalRate?: number) => {
     if (currency === 'USD') return usdVal;
     const rate = (type === 'cost' && historicalRate) ? historicalRate : currentExchangeRate;
     return usdVal * rate;
   };
 
-  // Stats Calculations
   const totalInvested = useMemo(() => 
     holdings.reduce((sum, h) => sum + toDisplay(h.shares * h.avgPrice, 'cost', h.exchangeRateAtPurchase), 0), 
   [holdings, currency, currentExchangeRate]);
@@ -182,7 +180,6 @@ export default function App() {
       </header>
 
       <main className="px-6 md:px-12 space-y-8 max-w-7xl mx-auto">
-        
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <MiniatureCard 
             title={t.totalMarketValue} 

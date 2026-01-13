@@ -29,6 +29,10 @@
       display: none;
     }
   </style>
+  <script>
+    // GitHub Pages 등 환경에서 process.env 참조 시 에러 방지
+    window.process = { env: { API_KEY: "" } };
+  </script>
 <script type="importmap">
 {
   "imports": {
@@ -41,10 +45,10 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body>
   <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+  <!-- 엔트리 포인트 명시적 호출 -->
+  <script type="module" src="./index.tsx"></script>
 </body>
 </html>

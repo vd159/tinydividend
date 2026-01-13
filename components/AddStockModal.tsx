@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { X, Search, Loader2, Calendar as CalendarIcon } from 'lucide-react';
-import { fetchStockData } from '../services/geminiService';
-import { StockHolding, Language } from '../types';
-import { TRANSLATIONS } from '../constants';
+import { fetchStockData } from '../services/geminiService.ts';
+import { StockHolding, Language } from '../types.ts';
+import { TRANSLATIONS } from '../constants.ts';
 
 interface AddStockModalProps {
   onClose: () => void;
