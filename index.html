@@ -15,10 +15,6 @@
       background-color: #f0f4f8;
       overflow-x: hidden;
     }
-    .tilt-shift {
-      filter: blur(2px);
-      mask-image: linear-gradient(to bottom, black 20%, transparent 0%, transparent 80%, black 100%);
-    }
     .mini-card {
       transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -28,27 +24,62 @@
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
+    #error-display {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      z-index: 9999;
+      color: #b91c1c;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
   </style>
   <script>
-    // GitHub Pages 등 환경에서 process.env 참조 시 에러 방지
-    window.process = { env: { API_KEY: "" } };
+    // 전역 process 객체 정의 (React 19 및 SDK 에러 방지)
+    window.process = { 
+      env: { 
+        NODE_ENV: 'production',
+        API_KEY: '' 
+      } 
+    };
+    
+    // 런타임 에러 포착 및 화면 표시
+    window.onerror = function(msg, url, line, col, error) {
+      const display = document.getElementById('error-display');
+      if (display) {
+        display.style.display = 'block';
+        display.innerHTML = `<strong>Error:</strong> ${msg}<br><small>${url}:${line}:${col}</small>`;
+      }
+      return false;
+    };
   </script>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "recharts": "https://esm.sh/recharts@^3.6.0"
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body>
   <div id="root"></div>
-  <!-- 엔트리 포인트 명시적 호출 -->
+  <div id="error-display"></div>
+  
+  <!-- ESM 모듈을 브라우저에서 직접 실행하기 위해 Sucrase와 같은 라이브러리가 없는 환경에서는 .tsx 실행이 제한될 수 있습니다. -->
+  <!-- 깃허브 페이지에서 .tsx 파일을 지원하지 않는 경우를 대비하여 index.tsx를 로드합니다. -->
   <script type="module" src="./index.tsx"></script>
 </body>
 </html>

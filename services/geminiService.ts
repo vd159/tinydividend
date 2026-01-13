@@ -2,9 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { StockHolding, DividendInsight, Language } from "../types.ts";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// process.env.API_KEY가 없을 경우 빈 문자열로 초기화하여 생성자 에러 방지
+const apiKey = (window.process?.env?.API_KEY) || "";
+const ai = new GoogleGenAI({ apiKey });
 
 export const fetchStockData = async (ticker: string, purchaseDate: string, lang: Language = 'en'): Promise<Partial<StockHolding> & { currentExchangeRate: number } | null> => {
+  if (!apiKey) {
+    console.warn("API Key is missing. Gemini features will not work.");
+    return null;
+  }
   const langContext = lang === 'ko' ? "Return the company name in Korean." : "Return the company name in English.";
   try {
     const response = await ai.models.generateContent({
@@ -40,7 +46,7 @@ export const fetchStockData = async (ticker: string, purchaseDate: string, lang:
 };
 
 export const getPortfolioInsights = async (holdings: StockHolding[], lang: Language = 'en'): Promise<DividendInsight | null> => {
-  if (holdings.length === 0) return null;
+  if (holdings.length === 0 || !apiKey) return null;
 
   const summary = holdings.map(h => `${h.ticker} (${h.shares} shares)`).join(", ");
   const langContext = lang === 'ko' ? "Please provide the summary and growthPotential in Korean language." : "";
@@ -73,6 +79,7 @@ export const getPortfolioInsights = async (holdings: StockHolding[], lang: Langu
 };
 
 export const getCurrentExchangeRate = async (): Promise<number> => {
+  if (!apiKey) return 1350;
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
